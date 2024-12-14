@@ -1,6 +1,6 @@
 from gui import *
 
-def main():
+def main() -> None:
     window = Tk()
     window.title('VOTING APPLICATION')
     window.geometry('500x700')

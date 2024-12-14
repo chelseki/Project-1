@@ -2,7 +2,15 @@ from tkinter import *
 import csv
 
 class GUI:
-    def __init__(self,window):
+    """
+    A class that sets up the GUI
+    """
+    def __init__(self,window) -> None:
+        """
+        Initializes the window.
+
+        :param window: Main window
+        """
         self.window = window
 
         self.frame_one = Frame(self.window)
@@ -37,15 +45,11 @@ class GUI:
         self.frame_five.pack(pady=15)
 
         self.frame_six = Frame(self.window)
-        # self.radio_answer = IntVar()
-        # self.radio_answer.set(0)
         self.radio_john = Radiobutton(self.frame_six, text='John', variable=self.radio_answer, value=2,font=('Times New Roman', 24))
         self.radio_john.pack(side='left')
         self.frame_six.pack(pady=10)
 
         self.frame_seven = Frame(self.window)
-        # self.radio_answer = IntVar()
-        # self.radio_answer.set(0)
         self.radio_misc = Radiobutton(self.frame_seven, text='', variable=self.radio_answer, value=3)
         self.input_misc = Entry(self.frame_seven, width=20)
         self.radio_misc.pack(side='left')
@@ -61,11 +65,18 @@ class GUI:
         self.result_button.pack(side='bottom')
         self.frame_eight.pack(pady=10)
 
-    def submit(self):
-        name = self.input_name.get().strip()
-        id = self.input_id.get().strip()
-        candidates = self.radio_answer.get()
-        third_candidate = self.input_misc.get().strip()
+    def submit(self) -> None:
+        """
+        Submits the vote the user inputs into a data.csv file.
+
+        Verifies name, ID, and vote are valid inputs.
+        If the input is invalid it will return an error message. If valid, the name, ID, and vote are stored in the CSV file.
+
+        """
+        name: str = self.input_name.get().strip()
+        id: str = self.input_id.get().strip()
+        candidates: str  = self.radio_answer.get()
+        third_candidate: str = self.input_misc.get().strip()
 
         try:
             if name == "":
@@ -77,10 +88,8 @@ class GUI:
             return
 
         try:
-            id = int(id)
-            if id == "":
-                raise ValueError()
-            if id < 0:
+            id:int = int(id)
+            if id == "" and id < 0:
                 raise ValueError()
         except ValueError:
             self.text_label.config(text='Enter correct ID value')
@@ -104,17 +113,17 @@ class GUI:
             return
 
         if candidates == 1:
-            candidate_name = 'Jane'
+            candidate_name: str = 'Jane'
         elif candidates == 2:
-            candidate_name = 'John'
+            candidate_name: str = 'John'
         elif candidates == 3:
-            candidate_name = third_candidate
+            candidate_name: str = third_candidate
 
         try:
             with open('data.csv','r', newline='') as filee:
                 reader = csv.reader(filee)
                 for word in reader:
-                    if len(word) >= 1 and word[1] == str(id):
+                    if word[1] == str(id):
                         raise ValueError()
         except ValueError:
             self.text_label.config(text='Already voted')
@@ -130,20 +139,29 @@ class GUI:
         self.input_misc.delete(0, END)
         self.text_label.config(text='Thanks for voting!')
 
-    def result(self):
-        total_vote = 0
-        vote_dict = {}
+    def result(self) -> None:
+        """
+        Displays the voting results.
+
+        Reads the CSV file and counts up the votes for each candidate then calculates the total number of votes.
+        """
+        total_vote: int = 0
+        vote_dict: dict[str, int] = {}
 
         with open('data.csv','r',newline='') as file2:
             reader=csv.reader(file2)
+            next(reader)
             for word in reader:
                 candidate = word[2].strip()
-                vote_dict[candidate] = vote_dict.get(candidate,0) + 1
+                if candidate in vote_dict:
+                    vote_dict[candidate] += 1
+                else:
+                    vote_dict[candidate] = 1
                 total_vote += 1
 
-            result_txt = "Vote Results:\n\n"
-            for candidate, count in vote_dict.items():
-                result_txt += f"{candidate} - {count} votes\n"
-            result_txt += f"\n Total Votes: {total_vote}"
+            the_results: str = "Vote Results:\n\n"
+            for candidate, num in vote_dict.items():
+                the_results += f'{candidate} - {num} votes\n'
+            the_results += f'\n Total Votes: {total_vote}'
 
-            self.text_label.config(text=result_txt)
+            self.text_label.config(text=the_results)
