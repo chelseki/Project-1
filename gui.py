@@ -81,7 +81,7 @@ class GUI:
         try:
             if name == "":
                 raise ValueError()
-            if not name.isalpha():
+            elif not name.isalpha():
                 raise ValueError()
         except ValueError:
             self.text_label.config(text='Invalid name, try again')
@@ -106,8 +106,8 @@ class GUI:
             if candidates == 3:
                 if third_candidate == "":
                     raise ValueError()
-                if not name.isalpha():
-                    raise ValueError()
+                elif not third_candidate.isalpha():
+                    raise ValueError
         except ValueError:
             self.text_label.config(text='Invalid candidate name, try again')
             return
